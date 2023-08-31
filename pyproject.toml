@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ride-sharing-service"
+version = "0.1.0"
+description = "Сервис для организации совместных поездок"
+authors = ["BootyOne <BootyOne@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "ride_sharing_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.103.0"
+python-dotenv = "^1.0.0"
+peewee = "^3.16.3"
+alembic = "^1.11.3"
+peewee-async = "^0.8.1"
+uvicorn = "^0.23.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
