@@ -1,7 +1,11 @@
-from fastapi import FastAPI, Request, status
+from fastapi import Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import ResponseValidationError
 from fastapi.responses import JSONResponse
+
+from fastapi import FastAPI
+from src.auth.routers import router as auth_router
+from src.drive.routers import router as drive_router
 
 
 app = FastAPI(
@@ -17,17 +21,5 @@ async def validation_exception_handler(request: Request, exc: ResponseValidation
     )
 
 
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth",
-    tags=["Auth"],
-)
-
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["Auth"],
-)
-
-
-app.include_router(router_configs)
+app.include_router(auth_router)
+app.include_router(drive_router)
