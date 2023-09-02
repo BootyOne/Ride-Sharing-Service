@@ -38,6 +38,23 @@ def migrate(migrator: Migrator, database: pw.Database, *, fake=False):
     """Write your migrations here."""
     
     @migrator.create_model
+    class Country(pw.Model):
+        name = pw.TextField()
+
+        class Meta:
+            table_name = "country"
+
+    @migrator.create_model
+    class City(pw.Model):
+        name = pw.TextField()
+        latitude = pw.FloatField()
+        longitude = pw.FloatField()
+        country_id = pw.ForeignKeyField(column_name='country_id', field='id', model=migrator.orm['country'])
+
+        class Meta:
+            table_name = "city"
+
+    @migrator.create_model
     class Role(pw.Model):
         name = pw.TextField(unique=True)
 
@@ -65,3 +82,7 @@ def rollback(migrator: Migrator, database: pw.Database, *, fake=False):
     migrator.remove_model('user')
 
     migrator.remove_model('role')
+
+    migrator.remove_model('city')
+
+    migrator.remove_model('country')
