@@ -1,14 +1,13 @@
+from src.auth.models import User, Role
+from src.auth.schemas import UserUpdate, Token, UserCreate, RoleCreate
+from src.auth.utils import verify_password, get_password_hash, create_access_token, get_current_user, check_already_exists
+
+from typing import Dict
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException
-
-from src.auth.schemas import UserUpdate
-from src.auth.models import User, Role
-from src.auth.utils import verify_password, get_password_hash, create_access_token
+from pydantic import EmailStr
 from peewee import DoesNotExist
-from pydantic import BaseModel
-from fastapi import Response, Request
-from fastapi.security import HTTPBearer
+from fastapi import Response, Request, APIRouter, HTTPException, Depends
 
 router = APIRouter(
     prefix='/Auth',
@@ -16,27 +15,8 @@ router = APIRouter(
 )
 
 
-
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
-    first_name: str
-    second_name: str
-    role_id: int
-
-
-class RoleCreate(BaseModel):
-    name: str
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-@router.post("/token", response_model=Token)
-async def login_for_access_token(response: Response, email: str, password: str):
+@router.post("/login", response_model=Token)
+async def login_for_access_token(response: Response, email: EmailStr, password: str):
     try:
         user = User.get(User.email == email)
     except DoesNotExist:
@@ -50,15 +30,19 @@ async def login_for_access_token(response: Response, email: str, password: str):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.post("/register/", response_model=UserCreate)
+@router.post("/register", response_model=UserCreate)
 async def register_user(user: UserCreate):
+    check_already_exists(user)
+
     hashed_password = get_password_hash(user.password)
-    User.insert(role_id=1, username=user.username, email=user.email, hashed_password=hashed_password,
-                    first_name=user.first_name, second_name=user.second_name, requested_at=datetime.utcnow(), is_active=False).execute()
+    User.insert(
+        role_id=1, username=user.username, email=user.email, hashed_password=hashed_password,
+        first_name=user.first_name, second_name=user.second_name, requested_at=datetime.utcnow(), is_active=False
+    ).execute()
     return user.model_dump()
 
 
-@router.post("/logout/")
+@router.post("/logout")
 async def logout_user(response: Response, request: Request):
     cookie_token = request.cookies.get("access_token")
     header_token = request.headers.get("Authorization")
@@ -70,26 +54,26 @@ async def logout_user(response: Response, request: Request):
     return {"detail": "Successfully logged out"}
 
 
-@router.post("/users/", response_model=UserCreate)
-async def create_user(user: UserCreate):
-    hashed_password = get_password_hash(user.password)
-    user_obj = User(email=user.email, hashed_password=hashed_password)
-    user_obj.save()
-    return {"email": user.email, "password": hashed_password}
+@router.post("/add_role", response_model=RoleCreate)
+async def register_user(role: RoleCreate, user: User = Depends(get_current_user)):
+    existing_role = Role.select().where(Role.name == role.name).first()
 
+    if existing_role:
+        raise HTTPException(status_code=400, detail="Role with this name already exists")
 
-@router.post("/add_role/", response_model=RoleCreate)
-async def register_user(role: RoleCreate):
     Role.insert(name=role.name).execute()
-    return role.model_dump()
+
+    return {"name": role.name}
 
 
-@router.patch("/users/{user_id}/", response_model=UserUpdate)
-async def update_user(user_id: int, user: UserUpdate):
-    query = User.update(**user.dict()).where(User.id == user_id)
+@router.patch("/update", response_model=Dict)
+async def update_user(user: UserUpdate, current_user: User = Depends(get_current_user)):
+    check_already_exists(user)
+
+    query = User.update(**user.model_dump()).where(User.id == current_user.id)
     updated_rows = query.execute()
 
     if updated_rows == 0:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user.model_dump()
+    return {'status': 'success'}

@@ -1,5 +1,6 @@
-from src.database.database import database_proxy
 from src.database.config import BaseModelDB
+from src.database.database import database_proxy
+
 
 from peewee import TextField, ForeignKeyField, FloatField, PrimaryKeyField
 

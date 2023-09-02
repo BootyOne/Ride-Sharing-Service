@@ -1,7 +1,7 @@
 from src.auth.models import User
 from src.auth.utils import get_current_user
-from src.regions.utils import get_all_regions_from_db
 from src.regions.models import Country, City
+from src.regions.utils import get_all_regions_from_db
 from src.regions.schemas import RegionCreate, RegionsRead
 
 from typing import List

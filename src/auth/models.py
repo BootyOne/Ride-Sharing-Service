@@ -1,8 +1,9 @@
-from datetime import datetime
 from src.database.config import BaseModelDB
+from src.database.database import database_proxy
+
+from datetime import datetime
 
 from peewee import BooleanField, ForeignKeyField, DateTimeField, TextField, PrimaryKeyField
-from src.database.database import database_proxy
 
 
 class Role(BaseModelDB):

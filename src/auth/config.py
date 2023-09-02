@@ -1,5 +1,5 @@
-from fastapi.security import HTTPBearer
 from fastapi import Request
+from fastapi.security import HTTPBearer
 
 
 class HTTPBearerWithCookie(HTTPBearer):
@@ -13,7 +13,7 @@ class HTTPBearerWithCookie(HTTPBearer):
         if not authorization and cookie_token:
             authorization = "Bearer " + cookie_token
 
-        request.state.authorization = authorization  # Здесь мы используем `request.state`
+        request.state.authorization = authorization
 
         return await super(HTTPBearerWithCookie, self).__call__(request)
 
