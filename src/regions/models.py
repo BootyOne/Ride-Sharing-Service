@@ -1,6 +1,7 @@
-from peewee import TextField, ForeignKeyField, FloatField, PrimaryKeyField
 from src.database.database import database_proxy
 from src.database.config import BaseModelDB
+
+from peewee import TextField, ForeignKeyField, FloatField, PrimaryKeyField
 
 
 class Country(BaseModelDB):

@@ -1,9 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+
 
 
 class UserUpdate(BaseModel):
     username: str = None
-    email: str = None
+    email: EmailStr
     first_name: str = None
     second_name: str = None
     phone_number: str = None

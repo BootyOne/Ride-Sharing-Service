@@ -1,6 +1,6 @@
-from typing import List
-
 from pydantic import BaseModel
+
+from typing import List
 
 
 class CityCreate(BaseModel):
@@ -19,6 +19,7 @@ class CityRead(BaseModel):
     name: str
     latitude: float
     longitude: float
+
 
 class RegionsRead(BaseModel):
     id: int
