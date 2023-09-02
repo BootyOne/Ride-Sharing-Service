@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI
 from src.auth.routers import router as auth_router
 from src.drive.routers import router as drive_router
+from src.regions.routers import router as regions_router
 
 
 app = FastAPI(
@@ -23,3 +24,4 @@ async def validation_exception_handler(request: Request, exc: ResponseValidation
 
 app.include_router(auth_router)
 app.include_router(drive_router)
+app.include_router(regions_router)

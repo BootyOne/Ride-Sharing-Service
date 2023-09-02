@@ -1,6 +1,6 @@
 import peewee
 
 
-class BaseModel(peewee.Model):
+class BaseModelDB(peewee.Model):
     class Meta:
         peewee.order_by = id

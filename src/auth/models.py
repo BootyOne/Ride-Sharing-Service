@@ -1,11 +1,11 @@
 from datetime import datetime
-from src.database.config import BaseModel
+from src.database.config import BaseModelDB
 
 from peewee import BooleanField, ForeignKeyField, DateTimeField, TextField, PrimaryKeyField
 from src.database.database import database_proxy
 
 
-class Role(BaseModel):
+class Role(BaseModelDB):
     id = PrimaryKeyField(unique=True)
     name = TextField(unique=True, null=False)
 
@@ -13,7 +13,7 @@ class Role(BaseModel):
         database = database_proxy
 
 
-class User(BaseModel):
+class User(BaseModelDB):
     id = PrimaryKeyField(unique=True)
     username = TextField(unique=True, null=False)
     email = TextField(unique=True, null=False)

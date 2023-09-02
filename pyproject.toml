@@ -20,6 +20,7 @@ asyncpg = "^0.28.0"
 aiopg = "^1.4.0"
 bcrypt = "^4.0.1"
 peewee-migrate = "^1.12.2"
+pydantic = "^2.3.0"
 
 
 [build-system]

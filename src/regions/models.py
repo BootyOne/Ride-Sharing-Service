@@ -1,9 +1,9 @@
 from peewee import TextField, ForeignKeyField, FloatField, PrimaryKeyField
 from src.database.database import database_proxy
-from src.database.config import BaseModel
+from src.database.config import BaseModelDB
 
 
-class Country(BaseModel):
+class Country(BaseModelDB):
     id = PrimaryKeyField(unique=True)
     name = TextField(null=False)
 
@@ -11,7 +11,7 @@ class Country(BaseModel):
         database = database_proxy
 
 
-class City(BaseModel):
+class City(BaseModelDB):
     id = PrimaryKeyField(unique=True)
     name = TextField(null=False)
     latitude = FloatField(null=False)

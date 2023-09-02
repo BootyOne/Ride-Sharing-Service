@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
+
+from src.auth.schemas import UserUpdate
 from src.auth.models import User, Role
 from src.auth.utils import verify_password, get_password_hash, create_access_token
 from peewee import DoesNotExist
@@ -13,23 +15,6 @@ router = APIRouter(
     tags=['Auth']
 )
 
-
-class HTTPBearerWithCookie(HTTPBearer):
-    def __init__(self, auto_error: bool = True):
-        super(HTTPBearerWithCookie, self).__init__(auto_error=auto_error)
-
-    async def __call__(self, request: Request):
-        authorization: str = request.headers.get("Authorization")
-        cookie_token = request.cookies.get("access_token")
-
-        if not authorization and cookie_token:
-            authorization = "Bearer " + cookie_token
-        request.headers["Authorization"] = authorization
-
-        return await super(HTTPBearerWithCookie, self).__call__(request)
-
-
-oauth2_scheme = HTTPBearerWithCookie()
 
 
 class UserCreate(BaseModel):
@@ -97,3 +82,14 @@ async def create_user(user: UserCreate):
 async def register_user(role: RoleCreate):
     Role.insert(name=role.name).execute()
     return role.model_dump()
+
+
+@router.patch("/users/{user_id}/", response_model=UserUpdate)
+async def update_user(user_id: int, user: UserUpdate):
+    query = User.update(**user.dict()).where(User.id == user_id)
+    updated_rows = query.execute()
+
+    if updated_rows == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user.model_dump()

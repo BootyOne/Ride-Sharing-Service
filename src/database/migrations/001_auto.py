@@ -68,6 +68,11 @@ def migrate(migrator: Migrator, database: pw.Database, *, fake=False):
         hashed_password = pw.TextField()
         first_name = pw.TextField()
         second_name = pw.TextField()
+        phone_number = pw.TextField(null=True, unique=True)
+        about_me = pw.TextField(null=True)
+        car_make = pw.TextField(null=True)
+        car_number = pw.TextField(null=True)
+        is_male = pw.BooleanField(null=True)
         role_id = pw.ForeignKeyField(column_name='role_id', field='id', model=migrator.orm['role'])
         requested_at = pw.DateTimeField()
         is_active = pw.BooleanField(default=False)
@@ -75,10 +80,47 @@ def migrate(migrator: Migrator, database: pw.Database, *, fake=False):
         class Meta:
             table_name = "user"
 
+    @migrator.create_model
+    class Trips(pw.Model):
+        driver = pw.ForeignKeyField(column_name='driver_id', field='id', model=migrator.orm['user'])
+        description = pw.TextField()
+        start_time = pw.DateTimeField()
+        end_time = pw.DateTimeField()
+        departure_country = pw.ForeignKeyField(column_name='departure_country_id', field='id', model=migrator.orm['country'])
+        departure_city = pw.ForeignKeyField(column_name='departure_city_id', field='id', model=migrator.orm['city'])
+        arrival_country = pw.ForeignKeyField(column_name='arrival_country_id', field='id', model=migrator.orm['country'])
+        arrival_city = pw.ForeignKeyField(column_name='arrival_city_id', field='id', model=migrator.orm['city'])
+        status = pw.BooleanField(default=False)
+        total_seats = pw.IntegerField(default=4)
+        reserved_seats = pw.IntegerField(default=0)
+
+        class Meta:
+            table_name = "trips"
+
+    @migrator.create_model
+    class TripsStatuses(pw.Model):
+        name = pw.TextField(unique=True)
+
+        class Meta:
+            table_name = "tripsstatuses"
+
+    @migrator.create_model
+    class UserTrips(pw.Model):
+        trip = pw.ForeignKeyField(column_name='trip_id', field='id', model=migrator.orm['trips'])
+
+        class Meta:
+            table_name = "usertrips"
+
 
 def rollback(migrator: Migrator, database: pw.Database, *, fake=False):
     """Write your rollback migrations here."""
     
+    migrator.remove_model('usertrips')
+
+    migrator.remove_model('tripsstatuses')
+
+    migrator.remove_model('trips')
+
     migrator.remove_model('user')
 
     migrator.remove_model('role')
