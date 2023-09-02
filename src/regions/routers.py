@@ -33,7 +33,7 @@ async def read_regions(user: User = Depends(get_current_user)):
     return regions
 
 
-@router.delete("/delete/")
+@router.delete("/delete")
 async def delete_region(region: RegionRemove, user: User = Depends(get_current_user)):
     try:
         country = Country.get(Country.name == region.country)

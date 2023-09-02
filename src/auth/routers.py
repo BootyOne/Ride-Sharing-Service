@@ -1,5 +1,5 @@
-from src.auth.models import User, Role
-from src.auth.schemas import UserUpdate, Token, UserCreate, RoleCreate
+from src.auth.models import User
+from src.auth.schemas import UserUpdate, Token, UserCreate
 from src.auth.utils import verify_password, get_password_hash, create_access_token, get_current_user, check_already_exists
 
 from typing import Dict
@@ -36,7 +36,7 @@ async def register_user(user: UserCreate):
 
     hashed_password = get_password_hash(user.password)
     User.insert(
-        role_id=1, username=user.username, email=user.email, hashed_password=hashed_password,
+        username=user.username, email=user.email, hashed_password=hashed_password,
         first_name=user.first_name, second_name=user.second_name, requested_at=datetime.utcnow(), is_active=False
     ).execute()
     return user.model_dump()
@@ -54,22 +54,8 @@ async def logout_user(response: Response, request: Request):
     return {"detail": "Successfully logged out"}
 
 
-@router.post("/add_role", response_model=RoleCreate)
-async def register_user(role: RoleCreate, user: User = Depends(get_current_user)):
-    existing_role = Role.select().where(Role.name == role.name).first()
-
-    if existing_role:
-        raise HTTPException(status_code=400, detail="Role with this name already exists")
-
-    Role.insert(name=role.name).execute()
-
-    return {"name": role.name}
-
-
 @router.patch("/update", response_model=Dict)
 async def update_user(user: UserUpdate, current_user: User = Depends(get_current_user)):
-    check_already_exists(user)
-
     query = User.update(**user.model_dump()).where(User.id == current_user.id)
     updated_rows = query.execute()
 

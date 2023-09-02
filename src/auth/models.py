@@ -3,15 +3,7 @@ from src.database.database import database_proxy
 
 from datetime import datetime
 
-from peewee import BooleanField, ForeignKeyField, DateTimeField, TextField, PrimaryKeyField
-
-
-class Role(BaseModelDB):
-    id = PrimaryKeyField(unique=True)
-    name = TextField(unique=True, null=False)
-
-    class Meta:
-        database = database_proxy
+from peewee import BooleanField, DateTimeField, TextField, PrimaryKeyField
 
 
 class User(BaseModelDB):
@@ -26,7 +18,6 @@ class User(BaseModelDB):
     car_make = TextField(null=True)
     car_number = TextField(null=True)
     is_male = BooleanField(null=True)
-    role_id = ForeignKeyField(column_name='role_id', model=Role)
     requested_at = DateTimeField(default=datetime.utcnow)
     is_active = BooleanField(default=False)
 

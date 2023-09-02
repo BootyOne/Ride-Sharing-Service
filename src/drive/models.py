@@ -1,8 +1,9 @@
-from peewee import TextField, ForeignKeyField, BooleanField, PrimaryKeyField, DateTimeField, IntegerField
-from src.database.database import database_proxy
 from src.auth.models import User
-from src.regions.models import Country, City
 from src.database.config import BaseModelDB
+from src.regions.models import Country, City
+from src.database.database import database_proxy
+
+from peewee import TextField, ForeignKeyField, PrimaryKeyField, DateTimeField, IntegerField
 
 
 class TripsStatuses(BaseModelDB):
@@ -15,7 +16,7 @@ class TripsStatuses(BaseModelDB):
 
 class Trips(BaseModelDB):
     id = PrimaryKeyField(unique=True)
-    driver = ForeignKeyField(User, backref='drives')
+    driver_id = ForeignKeyField(model=User)
     description = TextField()
     start_time = DateTimeField()
     end_time = DateTimeField()
@@ -33,7 +34,8 @@ class Trips(BaseModelDB):
 
 class UserTrips(BaseModelDB):
     id = PrimaryKeyField(unique=True)
-    trip = ForeignKeyField(model=Trips)
+    trip_id = ForeignKeyField(model=Trips)
+    user_id = ForeignKeyField(model=User)
 
     class Meta:
         database = database_proxy
