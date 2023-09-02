@@ -23,10 +23,6 @@ class UserCreate(BaseModel):
     phone_number: str
 
 
-class RoleCreate(BaseModel):
-    name: str
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str
