@@ -25,3 +25,12 @@ class RegionsRead(BaseModel):
     id: int
     name: str
     cities: List[CityRead]
+
+
+class CityRemove(BaseModel):
+    name: str
+
+
+class RegionRemove(BaseModel):
+    country: str
+    city: CityRemove
