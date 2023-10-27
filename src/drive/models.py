@@ -3,7 +3,13 @@ from src.database.config import BaseModelDB
 from src.regions.models import Country, City
 from src.database.database import database_proxy
 
-from peewee import TextField, ForeignKeyField, PrimaryKeyField, DateTimeField, IntegerField
+from peewee import (
+    TextField,
+    ForeignKeyField,
+    PrimaryKeyField,
+    DateTimeField,
+    IntegerField,
+)
 
 
 class TripsStatuses(BaseModelDB):

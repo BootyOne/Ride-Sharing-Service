@@ -9,5 +9,5 @@ database_proxy = PostgresqlDatabase(
     password=DB_PASSWORD,
     host=DB_HOST,
     port=DB_PORT,
-    autorollback=True
+    autorollback=True,
 )

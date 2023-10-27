@@ -74,6 +74,8 @@ def check_already_exists(user: Union[UserCreate, UserUpdate]):
     }
 
     for field, error_message in fields.items():
-        existing_user = User.select().where(getattr(User, field) == getattr(user, field)).first()
+        existing_user = (
+            User.select().where(getattr(User, field) == getattr(user, field)).first()
+        )
         if existing_user:
             raise HTTPException(status_code=400, detail=error_message)

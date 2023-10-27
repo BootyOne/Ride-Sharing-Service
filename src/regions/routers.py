@@ -10,10 +10,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends
 
-router = APIRouter(
-    prefix='/Regions',
-    tags=['Regions']
-)
+router = APIRouter(prefix="/Regions", tags=["Regions"])
 
 
 @router.post("/add")
@@ -21,7 +18,12 @@ async def add_region(region: RegionCreate, user: User = Depends(get_current_user
     if region.country:
         country, created = Country.get_or_create(name=region.country)
         if region.city:
-            City.create(name=region.city.name, country_id=country.id, latitude=region.city.latitude, longitude=region.city.longitude)
+            City.create(
+                name=region.city.name,
+                country_id=country.id,
+                latitude=region.city.latitude,
+                longitude=region.city.longitude,
+            )
     return {"status": "Region added"}
 
 
@@ -47,7 +49,9 @@ async def delete_region(region: RegionRemove, user: User = Depends(get_current_u
         return {"status": "Country and all related cities deleted"}
 
     try:
-        city = City.get((City.name == region.city.name) & (City.country_id == country.id))
+        city = City.get(
+            (City.name == region.city.name) & (City.country_id == country.id)
+        )
     except DoesNotExist:
         raise HTTPException(status_code=404, detail="City not found")
 

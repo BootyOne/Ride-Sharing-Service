@@ -9,16 +9,14 @@ from src.drive.routers import router as drive_router
 from src.regions.routers import router as regions_router
 
 
-app = FastAPI(
-    title='Ride Sharing Service'
-)
+app = FastAPI(title="Ride Sharing Service")
 
 
 @app.exception_handler(ResponseValidationError)
 async def validation_exception_handler(request: Request, exc: ResponseValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({'detail': exc.errors()})
+        content=jsonable_encoder({"detail": exc.errors()}),
     )
 
 

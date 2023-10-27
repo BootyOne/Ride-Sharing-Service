@@ -10,26 +10,23 @@ def get_all_regions_from_db() -> List[RegionsRead]:
     all_regions = []
 
     for country in query_countries:
-        query_cities = (City
-                        .select()
-                        .where(City.country_id == country.id)
-                        .order_by(City.name))
+        query_cities = (
+            City.select().where(City.country_id == country.id).order_by(City.name)
+        )
 
         cities = []
 
         for city in query_cities:
-            cities.append(CityRead(
-                id=city.id,
-                name=city.name,
-                latitude=city.latitude,
-                longitude=city.longitude
-            ))
+            cities.append(
+                CityRead(
+                    id=city.id,
+                    name=city.name,
+                    latitude=city.latitude,
+                    longitude=city.longitude,
+                )
+            )
 
-        region = RegionsRead(
-            id=country.id,
-            name=country.name,
-            cities=cities
-        )
+        region = RegionsRead(id=country.id, name=country.name, cities=cities)
 
         all_regions.append(region)
 
